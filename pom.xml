@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.googlecode.fannj</groupId>
+    <groupId>com.github.jjYBdx4IL.nn.fannj</groupId>
     <artifactId>fannj</artifactId>
     <packaging>jar</packaging>
-    <version>0.8-SNAPSHOT</version>
+    <version>0.7.1-SNAPSHOT</version>
     <name>fannj</name>
-    <description>Provides Java bindings to the Fast Artificial Neural Network Library (FANN).</description>
+    <description>Provides Java bindings to the Fast Artificial Neural Network Library (FANN). This is a x86-64 only release of the upstream project https://github.com/krenfro/fannj</description>
        
-    <url>https://github.com/krenfro/fannj</url>
+    <url>https://github.com/jjYBdx4IL/fannj</url>
     <inceptionYear>2009</inceptionYear>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,11 +27,22 @@
             <id>krenfro</id>
             <name>Kyle Renfro</name>
             <email>kylerenfro@gmail.com</email>
+            <roles>
+                <role>author</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>jjYBdx4IL</id>
+            <roles>
+                <role>maven build/maven central deployment</role>
+            </roles>
+            <url>https://github.com/jjYBdx4IL</url>
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/krenfro/fannj</connection>
-        <url>https://github.com/krenfro/fannj</url>
+        <connection>scm:git:git://github.com/jjYBdx4IL/fannj.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/jjYBdx4IL/fannj.git</developerConnection>
+        <url>https://github.com/jjYBdx4IL/fannj</url>
         <tag>HEAD</tag>
     </scm>
     <distributionManagement>
@@ -44,41 +55,103 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.6.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>2.1</version>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireNoRepositories />
+                                <requirePluginVersions />
+                                <requireReleaseDeps />
+                                <requireUpperBoundDeps />
+                                <requireJavaVersion>
+                                    <version>[1.6,)</version>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>[3.3,)</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-scm-plugin</artifactId>
-                <version>1.9.1</version>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5</version>
+                <goals>deploy nexus-staging:release</goals>
+                <configuration>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
                 <configuration>
                     <systemPropertyVariables>
                         <jna.library.path>${project.build.directory}/native/${aol}</jna.library.path>
                     </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>oss.sonatype.org</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
         </plugins>
@@ -89,10 +162,91 @@
                 <version>1.9</version>
             </extension>
         </extensions>        
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.5.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>1.4.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.5.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-plugin</artifactId>
+                    <version>1.9.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.5.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.19.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.7</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
+
     <issueManagement>
         <url>https://github.com/krenfro/fannj/issues</url>
     </issueManagement>
+
     <dependencies>
         <dependency>
             <groupId>net.java.dev.jna</groupId>
@@ -116,6 +270,12 @@
     <profiles>
         <profile>
             <id>release</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -130,7 +290,7 @@
                                     <goal>sign</goal>
                                 </goals>
                                 <configuration>
-                                    <keyname>277117C3</keyname>
+                                    <keyname>jjYBdx4IL@github</keyname>
                                 </configuration>
                             </execution>
                         </executions>
@@ -138,7 +298,6 @@
                 </plugins>
             </build>
         </profile>
-
 
         <profile>
             <id>linux</id>
@@ -185,7 +344,7 @@
                                 </goals>
                                 <phase>generate-sources</phase>
                                 <configuration>
-                                    <executable>${project.basedir}/linux-native-build.sh</executable>
+                                    <executable>${project.basedir}/src/main/resources/linux-native-build.sh</executable>
                                     <arguments>
                                         <arg>${project.build.directory}/FANN-${fann.version}-Source</arg>
                                         <arg>${project.build.directory}/native/${aol}</arg>
