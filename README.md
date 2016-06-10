@@ -8,6 +8,16 @@ Use FannJ if you have an existing ANN from the FANN project that you would like 
 ##Installation
 Before using FannJ, you must build and install the FANN C library. FannJ has been tested on FANN 2.2.0. See the FANN site for instructions and help: http://leenissen.dk/fann
 
+If you are using a x86-64 linux system however, there is a maven central release containing native binaries and which should work out of the box:
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.jjYBdx4IL.nn.fannj</groupId>
+            <artifactId>fannj</artifactId>
+            <version>0.7.1</version>
+        </dependency>
+    </dependencies>
+
 ##Code Example
     Fann fann = new Fann( "/path/to/file" );
     float[] inputs = new float[]{ -1, 1 };
