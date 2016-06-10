@@ -4,7 +4,7 @@
     <groupId>com.github.jjYBdx4IL.nn.fannj</groupId>
     <artifactId>fannj</artifactId>
     <packaging>jar</packaging>
-    <version>0.7.1-SNAPSHOT</version>
+    <version>0.7.1</version>
     <name>fannj</name>
     <description>Provides Java bindings to the Fast Artificial Neural Network Library (FANN). This is a x86-64 only release of the upstream project https://github.com/krenfro/fannj</description>
        
@@ -43,7 +43,7 @@
         <connection>scm:git:git://github.com/jjYBdx4IL/fannj.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jjYBdx4IL/fannj.git</developerConnection>
         <url>https://github.com/jjYBdx4IL/fannj</url>
-        <tag>HEAD</tag>
+        <tag>0.7.1</tag>
     </scm>
     <distributionManagement>
         <repository>
