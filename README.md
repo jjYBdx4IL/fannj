@@ -5,24 +5,16 @@ Java bindings to [FANN](http://leenissen.dk/fann), the Fast Artificial Neural Ne
 ##Overview
 Use FannJ if you have an existing ANN from the FANN project that you would like to access from Java. There are several GUI tools that will help you create and train an ANN.
 
-##Installation
-Before using FannJ, you must build and install the FANN C library. FannJ has been tested on FANN 2.2.0. See the FANN site for instructions and help: http://leenissen.dk/fann
-
-If you are using a x86-64 linux or windows system however, there is a maven central release containing native binaries and which should work out of the box:
-
-    <dependencies>
-        <dependency>
-            <groupId>com.github.jjYBdx4IL.nn.fannj</groupId>
-            <artifactId>fannj</artifactId>
-            <version>0.7.2</version>
-        </dependency>
-    </dependencies>
+##Supported Operating Systems
+Currently only x86-64 variants of Linux and Windows are supported out of the box. However, if you are willing to test the build, it should be easy to include any target for which there is cross compilation readily available on a regular Linux installation.
 
 ##Code Example
     Fann fann = new Fann( "/path/to/file" );
     float[] inputs = new float[]{ -1, 1 };
     float[] outputs = fann.run( inputs );
     fann.close();
+
+For more example, have a look at the junit tests.
   
 ##Dependencies
 [FANN](http://leenissen.dk/fann) - Does all the work.
@@ -34,22 +26,14 @@ This project is now in the Maven Central Repository.
 
     <dependencies>
         <dependency>
-            <groupId>com.googlecode.fannj</groupId>
+            <groupId>com.github.jjYBdx4IL.nn.fannj</groupId>
             <artifactId>fannj</artifactId>
-            <version>0.7</version>
+            <version>0.7.2</version>
         </dependency>
     </dependencies>
 
 ##Running
-JNA provides the binding from Java to the FANN C library via JNI. You must set the jna.library.path system property to the path to the FANN Library. This property is similar to java.library.path but only applies to libraries loaded by JNA. You should also change the appropriate library access environment variable before launching the VM. This is PATH on Windows, LD\_LIBRARY\_PATH on Linux, and DYLD\_LIBRARY\_PATH on OSX.
-
-Linux something like:
-    
-    LD_LIBRARY_PATH=/usr/local/lib
-
-    java -Djna.library.path=/usr/local/lib -cp fannj-0.7.jar:jna-3.2.2.jar YourClass
-
-Update: the maven descriptor (pom.xml) now contains a section (atm only for Linux) that builds FANN from sources and packs the native library into a jar file called fannj-&lt;version&gt;-linux-x86_64.jar. If you put that jar onto the classpath, the JNA libs should be able to extract and load the contained libs all by themselves and without additional configuration.
+If you are using maven, including the main artifact listed above is enough. Otherwise, you'd have to manually include the dependencies listed in pom.xml.
 
 ##Building
-The native libs for windows and linux can only be built on linux systems atm. You need the mingw compiler for that.
+The native libs for windows and linux can only be built on linux systems atm. You need the mingw compiler and the cmake tool for that. We use cmake toolchain config files to configure the compiler for each target platform.
