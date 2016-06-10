@@ -23,6 +23,7 @@ import com.sun.jna.NativeLibrary;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.win32.StdCallLibrary;
+
 import java.util.Map;
 
 /**
@@ -33,16 +34,7 @@ import java.util.Map;
 public class Trainer {
     
     static {
-        NativeLibrary fann;
-        if (Platform.isWindows()){
-            fann = NativeLibrary.getInstance("fannfloat");
-            Map options = fann.getOptions();
-            options.put(Library.OPTION_CALLING_CONVENTION,  StdCallLibrary.STDCALL_CONVENTION);
-            options.put(Library.OPTION_FUNCTION_MAPPER, new WindowsFunctionMapper());            
-        }
-        else{
-            fann = NativeLibrary.getInstance("fann");
-        }
+        NativeLibrary fann = NativeLibrary.getInstance("fann");
         Native.register(fann);
     }
  

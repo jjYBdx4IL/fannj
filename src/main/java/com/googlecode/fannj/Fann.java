@@ -47,19 +47,10 @@ import java.util.Map;
 public class Fann {
 
     static {
-        NativeLibrary fann;
-        if (Platform.isWindows()){
-            fann = NativeLibrary.getInstance("fannfloat");
-            Map options = fann.getOptions();
-            options.put(Library.OPTION_CALLING_CONVENTION,  StdCallLibrary.STDCALL_CONVENTION);
-            options.put(Library.OPTION_FUNCTION_MAPPER, new WindowsFunctionMapper());            
-        }
-        else{
-            fann = NativeLibrary.getInstance("fann");
-        }
+        NativeLibrary fann = NativeLibrary.getInstance("fann");
         Native.register(fann);
     }
-    
+
     protected Pointer ann;
 
     protected Fann() {

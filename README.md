@@ -8,13 +8,13 @@ Use FannJ if you have an existing ANN from the FANN project that you would like 
 ##Installation
 Before using FannJ, you must build and install the FANN C library. FannJ has been tested on FANN 2.2.0. See the FANN site for instructions and help: http://leenissen.dk/fann
 
-If you are using a x86-64 linux system however, there is a maven central release containing native binaries and which should work out of the box:
+If you are using a x86-64 linux or windows system however, there is a maven central release containing native binaries and which should work out of the box:
 
     <dependencies>
         <dependency>
             <groupId>com.github.jjYBdx4IL.nn.fannj</groupId>
             <artifactId>fannj</artifactId>
-            <version>0.7.1</version>
+            <version>0.7.2</version>
         </dependency>
     </dependencies>
 
@@ -50,3 +50,6 @@ Linux something like:
     java -Djna.library.path=/usr/local/lib -cp fannj-0.7.jar:jna-3.2.2.jar YourClass
 
 Update: the maven descriptor (pom.xml) now contains a section (atm only for Linux) that builds FANN from sources and packs the native library into a jar file called fannj-&lt;version&gt;-linux-x86_64.jar. If you put that jar onto the classpath, the JNA libs should be able to extract and load the contained libs all by themselves and without additional configuration.
+
+##Building
+The native libs for windows and linux can only be built on linux systems atm. You need the mingw compiler for that.

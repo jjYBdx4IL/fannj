@@ -6,13 +6,12 @@
     <packaging>jar</packaging>
     <version>0.7.2-SNAPSHOT</version>
     <name>fannj</name>
-    <description>Provides Java bindings to the Fast Artificial Neural Network Library (FANN). This is a x86-64 only release of the upstream project https://github.com/krenfro/fannj</description>
+    <description>Provides Java bindings to the Fast Artificial Neural Network Library (FANN). This is a release of the upstream project https://github.com/krenfro/fannj including native libs for x86-64 windows and linux</description>
        
     <url>https://github.com/jjYBdx4IL/fannj</url>
     <inceptionYear>2009</inceptionYear>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <aol>${os.name}-${os.arch}</aol>
         <fann.version>2.2.0</fann.version>
     </properties>
     <licenses>
@@ -90,44 +89,33 @@
                                     <version>[1.6,)</version>
                                 </requireJavaVersion>
                                 <requireMavenVersion>
-                                    <version>[3.3,)</version>
+                                    <version>[3.0,)</version>
                                 </requireMavenVersion>
                             </rules>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <!-- ITs run against the natives bundled in the final jar -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-scm-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <artifactId>maven-release-plugin</artifactId>
-                <goals>deploy nexus-staging:release</goals>
-                <configuration>
-                    <tagNameFormat>@{project.version}</tagNameFormat>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <jna.library.path>${project.build.directory}/native/${aol}</jna.library.path>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
+                <artifactId>maven-failsafe-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>attach-sources</id>
+                        <id>run-tests</id>
+                        <phase>integration-test</phase>
                         <goals>
-                            <goal>jar</goal>
-                            <goal>test-jar</goal>
+                            <goal>integration-test</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <systemPropertyVariables>
+                        <jna.debug_load>true</jna.debug_load>
+                    </systemPropertyVariables>
+                    <includes>
+                        <include>**/*Test</include>
+                    </includes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -142,6 +130,37 @@
                 </executions>
                 <configuration>
                     <additionalparam>-Xdoclint:none</additionalparam>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-scm-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <goals>deploy nexus-staging:release</goals>
+                <configuration>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                            <goal>test-jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- regular tests run against the unpacked native lib -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <jna.debug_load>true</jna.debug_load>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
@@ -183,6 +202,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>1.4.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.19.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -306,17 +330,14 @@
                     <name>linux</name>
                 </os>
             </activation>
-            <properties>
-                <os.name>linux</os.name>
-            </properties>
 
-            <!-- build native lib and create jar on linux systems-->
+            <!-- native lib build only supported on linux systems -->
             <build>
                 <plugins>
                     <plugin>
                         <groupId>com.googlecode.maven-download-plugin</groupId>
                         <artifactId>download-maven-plugin</artifactId>
-                        <version>1.2.1</version>
+                        <version>1.3.0</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -335,36 +356,36 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.4.0</version>
+                        <version>1.5.0</version>
                         <executions>
                             <execution>
-                                <id>linux-native-build</id>
+                                <id>linux-build</id>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
                                 <phase>generate-sources</phase>
                                 <configuration>
-                                    <executable>${project.basedir}/src/main/resources/linux-native-build.sh</executable>
+                                    <executable>${project.basedir}/src/main/resources/build.sh</executable>
                                     <arguments>
                                         <arg>${project.build.directory}/FANN-${fann.version}-Source</arg>
-                                        <arg>${project.build.directory}/native/${aol}</arg>
+                                        <arg>${project.build.outputDirectory}/linux-x86-64</arg>
+                                        <arg>${project.basedir}/src/main/resources/cmake-toolchain-linux64</arg>
                                     </arguments>
                                 </configuration>
                             </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <version>2.6</version>
-                        <executions>
                             <execution>
-                                <id>native-jar</id>
+                                <id>windows-build</id>
                                 <goals>
-                                    <goal>jar</goal>
+                                    <goal>exec</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
-                                    <classifier>${aol}</classifier>
-                                    <classesDirectory>${project.build.directory}/native</classesDirectory>
+                                    <executable>${project.basedir}/src/main/resources/build.sh</executable>
+                                    <arguments>
+                                        <arg>${project.build.directory}/FANN-${fann.version}-Source</arg>
+                                        <arg>${project.build.outputDirectory}/win32-x86-64</arg>
+                                        <arg>${project.basedir}/src/main/resources/cmake-toolchain-win64</arg>
+                                    </arguments>
                                 </configuration>
                             </execution>
                         </executions>
@@ -372,95 +393,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>macosx</id>
-            <activation>
-                <os>
-                    <name>mac os x</name>
-                </os>
-            </activation>
-            <properties>
-                <os.name>macosx</os.name>
-            </properties>
-        </profile>
-        <profile>
-            <id>windows</id>
-            <activation>
-                <os>
-                    <family>windows</family>
-                </os>
-            </activation>
-            <properties>
-                <os.name>windows</os.name>
-            </properties>
-        </profile>
-        <profile>
-            <id>i386</id>
-            <activation>
-                <os>
-                    <arch>i386</arch>
-                </os>
-            </activation>
-            <properties>
-                <os.arch>x86</os.arch>
-            </properties>
-        </profile>
-        <profile>
-            <id>i486</id>
-            <activation>
-                <os>
-                    <arch>i486</arch>
-                </os>
-            </activation>
-            <properties>
-                <os.arch>x86</os.arch>
-            </properties>
-        </profile>
-        <profile>
-            <id>i586</id>
-            <activation>
-                <os>
-                    <arch>i586</arch>
-                </os>
-            </activation>
-            <properties>
-                <os.arch>x86</os.arch>
-            </properties>
-        </profile>
-        <profile>
-            <id>i686</id>
-            <activation>
-                <os>
-                    <arch>i686</arch>
-                </os>
-            </activation>
-            <properties>
-                <os.arch>x86</os.arch>
-            </properties>
-        </profile>
-        <profile>
-            <id>amd64</id>
-            <activation>
-                <os>
-                    <arch>amd64</arch>
-                </os>
-            </activation>
-            <properties>
-                <os.arch>x86-64</os.arch>
-            </properties>
-        </profile>
-        <profile>
-            <id>x86-64</id>
-            <activation>
-                <os>
-                    <arch>x86-64</arch>
-                </os>
-            </activation>
-            <properties>
-                <os.arch>x86-64</os.arch>
-            </properties>
-        </profile>
-  
     </profiles>
 </project>
 
