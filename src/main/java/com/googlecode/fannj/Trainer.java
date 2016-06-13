@@ -24,7 +24,10 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.win32.StdCallLibrary;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  * Trains an ANN. Currently only File based training is supported.
@@ -56,6 +59,52 @@ public class Trainer {
 
         fann_train_on_file(fann.ann, trainingFile, maxEpochs,
                 epochsBetweenReports, desiredError);
+        return fann_get_MSE(fann.ann);
+    }
+
+    /**
+     * Training loop done in Java. Currently only used to test fann_train native method.
+     * @param trainingFile
+     * @param maxEpochs
+     * @param desiredError
+     * @return MSE for the ann once trained
+     */
+    float trainJavaLoop(File trainingFile, int maxEpochs, float desiredError) throws FileNotFoundException {
+
+        int epoch = 0;
+        float[] inputs = new float[fann.getNumInputNeurons()];
+        float[] outputs = new float[fann.getNumOutputNeurons()];
+        do {
+            epoch++;
+            fann_reset_MSE(fann.ann);
+            Scanner scan = new Scanner(trainingFile);
+            // skip first line
+            if (scan.hasNextLine()) {
+                scan.nextLine();
+            }
+            while (scan.hasNextLine()) {
+                String inputLine = scan.nextLine();
+                if (inputLine.isEmpty()) {
+                    continue;
+                }
+                int n = 0;
+                for (String value : inputLine.split("\\s+")) {
+                    inputs[n++] = Float.valueOf(value);
+                }
+                if (scan.hasNextLine()) {
+                    String outputLine = scan.nextLine();
+                    if (outputLine.isEmpty()) {
+                        continue;
+                    }
+                    n = 0;
+                    for (String value : outputLine.split("\\s+")) {
+                        outputs[n++] = Float.valueOf(value);
+                    }
+                    fann_train(fann.ann, inputs, outputs);
+                }
+            }
+            scan.close();
+        } while (epoch < maxEpochs && fann_get_MSE(fann.ann) > desiredError);
         return fann_get_MSE(fann.ann);
     }
 
@@ -109,6 +158,8 @@ public class Trainer {
             int training_algorithm);
 
     protected static native int fann_get_training_algorithm(Pointer ann);
+
+    protected static native void fann_train(Pointer ann, float[] input, float[] output);
 
     /**
      * Resets the mean square error from the network.

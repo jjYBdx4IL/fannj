@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jjYBdx4IL/fannj.png?branch=master)](https://travis-ci.org/jjYBdx4IL/fannj)
+
 #fannj
 
 Java bindings to [FANN](http://leenissen.dk/fann), the Fast Artificial Neural Network C library.
