@@ -140,8 +140,10 @@ public class Fann {
      * You must call this method when you are finished to prevent memory leaks.
      */
     public void close() {
-        if (ann != null)
+        if (ann != null) {
             fann_destroy(ann);
+            ann = null;
+        }
     }
 
     /**
