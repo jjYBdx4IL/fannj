@@ -17,16 +17,12 @@
  */
 package com.googlecode.fannj;
 
-import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
-import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
-import com.sun.jna.win32.StdCallLibrary;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -60,6 +56,10 @@ public class Trainer {
         fann_train_on_file(fann.ann, trainingFile, maxEpochs,
                 epochsBetweenReports, desiredError);
         return fann_get_MSE(fann.ann);
+    }
+
+    public void trainSingleStep(float[] input, float[] output) {
+        fann_train(fann.ann, input, output);
     }
 
     /**
