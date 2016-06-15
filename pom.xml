@@ -271,6 +271,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.github.jjYBdx4IL</groupId>
+            <artifactId>github-utils</artifactId>
+            <version>1.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-core</artifactId>
             <version>1.12</version>
@@ -294,10 +299,16 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.jjYBdx4IL</groupId>
-            <artifactId>github-utils</artifactId>
-            <version>1.1-SNAPSHOT</version>
-            <type>jar</type>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.21</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
