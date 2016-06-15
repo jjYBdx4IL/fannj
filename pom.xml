@@ -12,6 +12,7 @@
     <inceptionYear>2009</inceptionYear>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <fann.version>2.2.0</fann.version>
     </properties>
     <licenses>
@@ -54,6 +55,25 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.10</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/c</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
@@ -70,31 +90,6 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce-versions</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireNoRepositories />
-                                <requirePluginVersions />
-                                <requireReleaseDeps />
-                                <requireUpperBoundDeps />
-                                <requireJavaVersion>
-                                    <version>[1.6,)</version>
-                                </requireJavaVersion>
-                                <requireMavenVersion>
-                                    <version>[3.0,)</version>
-                                </requireMavenVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <!-- ITs run against the natives bundled in the final jar -->
             <plugin>
@@ -298,6 +293,12 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.jjYBdx4IL</groupId>
+            <artifactId>github-utils</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -311,6 +312,31 @@
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-versions</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireNoRepositories />
+                                        <requirePluginVersions />
+                                        <requireReleaseDeps />
+                                        <requireUpperBoundDeps />
+                                        <requireJavaVersion>
+                                            <version>[1.6,)</version>
+                                        </requireJavaVersion>
+                                        <requireMavenVersion>
+                                            <version>[3.0,)</version>
+                                        </requireMavenVersion>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
@@ -368,17 +394,36 @@
                         <version>1.5.0</version>
                         <executions>
                             <execution>
+                                <id>build-jni-header</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>generate-test-sources</phase>
+                                <configuration>
+                                    <executable>javah</executable>
+                                    <arguments>
+                                        <arg>-classpath</arg>
+                                        <classpath/>
+                                        <arg>-d</arg>
+                                        <arg>${project.build.directory}/generated-sources/c</arg>
+                                        <arg>com.googlecode.fannj.FannJNI</arg>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>linux-build</id>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
-                                <phase>generate-sources</phase>
+                                <phase>generate-test-sources</phase>
                                 <configuration>
                                     <executable>${project.basedir}/src/main/resources/build.sh</executable>
                                     <arguments>
                                         <arg>${project.build.directory}/FANN-${fann.version}-Source</arg>
                                         <arg>${project.build.outputDirectory}/linux-x86-64</arg>
                                         <arg>${project.basedir}/src/main/resources/cmake-toolchain-linux64</arg>
+                                        <arg>${project.basedir}</arg>
+                                        <arg>x86_64-linux-gnu-gcc</arg>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -387,13 +432,15 @@
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
-                                <phase>generate-sources</phase>
+                                <phase>generate-test-sources</phase>
                                 <configuration>
                                     <executable>${project.basedir}/src/main/resources/build.sh</executable>
                                     <arguments>
                                         <arg>${project.build.directory}/FANN-${fann.version}-Source</arg>
                                         <arg>${project.build.outputDirectory}/win32-x86-64</arg>
                                         <arg>${project.basedir}/src/main/resources/cmake-toolchain-win64</arg>
+                                        <arg>${project.basedir}</arg>
+                                        <arg>x86_64-w64-mingw32-gcc</arg>
                                     </arguments>
                                 </configuration>
                             </execution>

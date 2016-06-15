@@ -65,12 +65,24 @@ public class Trainer {
         fann_train(fann.ann, input, output);
     }
 
+    public void trainSingleStepJNI(float[] input, float[] output) {
+        FannJNI.train(Pointer.nativeValue(fann.ann), input, output);
+    }
+
     public float getMSE() {
         return fann_get_MSE(fann.ann);
     }
 
+    public float getMSEJNI() {
+        return FannJNI.get_MSE(Pointer.nativeValue(fann.ann));
+    }
+
     public void resetMSE() {
         fann_reset_MSE(fann.ann);
+    }
+
+    public void resetMSEJNI() {
+        FannJNI.reset_MSE(Pointer.nativeValue(fann.ann));
     }
 
     /**
@@ -91,12 +103,38 @@ public class Trainer {
 
         do {
             epoch++;
-            fann_reset_MSE(fann.ann);
+            resetMSE();
             for (int i = 0; i < data.getNumDataSets(); i++) {
-                fann_train(fann.ann, inputValues[i], outputValues[i]);
+                trainSingleStep(inputValues[i], outputValues[i]);
             }
-        } while (epoch < maxEpochs && fann_get_MSE(fann.ann) > desiredError);
-        return fann_get_MSE(fann.ann);
+        } while (epoch < maxEpochs && getMSE() > desiredError);
+        return getMSE();
+    }
+
+    /**
+     * Training loop done in Java. Currently only used to test native train method access via JNI.
+     *
+     * @param trainingFile
+     * @param maxEpochs
+     * @param desiredError
+     * @return MSE for the ann once trained
+     */
+    float trainJavaLoopJNI(File trainingFile, int maxEpochs, float desiredError) throws FileNotFoundException, IOException {
+
+        TrainData data = TrainData.load(trainingFile);
+
+        int epoch = 0;
+        final float[][] inputValues = data.getInputValues();
+        final float[][] outputValues = data.getInputValues();
+
+        do {
+            epoch++;
+            resetMSEJNI();
+            for (int i = 0; i < data.getNumDataSets(); i++) {
+                trainSingleStepJNI(inputValues[i], outputValues[i]);
+            }
+        } while (epoch < maxEpochs && getMSE() > desiredError);
+        return getMSEJNI();
     }
 
     /**

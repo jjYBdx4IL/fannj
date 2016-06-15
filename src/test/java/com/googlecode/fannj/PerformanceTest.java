@@ -37,6 +37,17 @@ public class PerformanceTest {
         }
     }
 
+    @Benchmark
+    public void benchmarkSingleStepTrainingJNI1000x(BenchmarkState state, Blackhole bh) {
+        state.trainer.resetMSEJNI();
+        for (int epoch = 0; epoch < state.list.length; epoch++) {
+            for (int i = 0; i < state.numDataSets; i++) {
+                state.trainer.trainSingleStepJNI(state.inputValues[i], state.outputValues[i]);
+                bh.consume(state.list[epoch]);
+            }
+        }
+    }
+
     @Test
     public void testRunner() throws RunnerException {
         Options opt = new OptionsBuilder()
