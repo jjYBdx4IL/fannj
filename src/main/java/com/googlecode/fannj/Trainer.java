@@ -22,21 +22,24 @@ import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Scanner;
 
 /**
  * Trains an ANN. Currently only File based training is supported.
- * 
+ *
  * @author krenfro, drt24, brandstaetter
  */
 public class Trainer {
-    
+
     static {
         NativeLibrary fann = NativeLibrary.getInstance("fann");
         Native.register(fann);
     }
- 
+
     Fann fann;
 
     public Trainer(Fann fann) {
@@ -62,54 +65,42 @@ public class Trainer {
         fann_train(fann.ann, input, output);
     }
 
+    public float getMSE() {
+        return fann_get_MSE(fann.ann);
+    }
+
+    public void resetMSE() {
+        fann_reset_MSE(fann.ann);
+    }
+
     /**
      * Training loop done in Java. Currently only used to test fann_train native method.
+     *
      * @param trainingFile
      * @param maxEpochs
      * @param desiredError
      * @return MSE for the ann once trained
      */
-    float trainJavaLoop(File trainingFile, int maxEpochs, float desiredError) throws FileNotFoundException {
+    float trainJavaLoop(File trainingFile, int maxEpochs, float desiredError) throws FileNotFoundException, IOException {
+
+        TrainData data = TrainData.load(trainingFile);
 
         int epoch = 0;
-        float[] inputs = new float[fann.getNumInputNeurons()];
-        float[] outputs = new float[fann.getNumOutputNeurons()];
+        final float[][] inputValues = data.getInputValues();
+        final float[][] outputValues = data.getInputValues();
+
         do {
             epoch++;
             fann_reset_MSE(fann.ann);
-            Scanner scan = new Scanner(trainingFile);
-            // skip first line
-            if (scan.hasNextLine()) {
-                scan.nextLine();
+            for (int i = 0; i < data.getNumDataSets(); i++) {
+                fann_train(fann.ann, inputValues[i], outputValues[i]);
             }
-            while (scan.hasNextLine()) {
-                String inputLine = scan.nextLine();
-                if (inputLine.isEmpty()) {
-                    continue;
-                }
-                int n = 0;
-                for (String value : inputLine.split("\\s+")) {
-                    inputs[n++] = Float.valueOf(value);
-                }
-                if (scan.hasNextLine()) {
-                    String outputLine = scan.nextLine();
-                    if (outputLine.isEmpty()) {
-                        continue;
-                    }
-                    n = 0;
-                    for (String value : outputLine.split("\\s+")) {
-                        outputs[n++] = Float.valueOf(value);
-                    }
-                    fann_train(fann.ann, inputs, outputs);
-                }
-            }
-            scan.close();
         } while (epoch < maxEpochs && fann_get_MSE(fann.ann) > desiredError);
         return fann_get_MSE(fann.ann);
     }
 
     /**
-     * 
+     *
      * @param dataFile
      * @param maxNeurons
      * @param neuronsBetweenReports
@@ -130,7 +121,7 @@ public class Trainer {
     }
 
     /**
-     * 
+     *
      * @param testingFile
      * @return MSE for the Fann which has been tested
      */
@@ -163,14 +154,14 @@ public class Trainer {
 
     /**
      * Resets the mean square error from the network.
-     * 
+     *
      * @param ann
      */
     protected static native void fann_reset_MSE(Pointer ann);
 
     /**
      * Reads the mean square error from the network.
-     * 
+     *
      * @param ann
      * @return the mean square error of the network
      */
@@ -178,34 +169,30 @@ public class Trainer {
 
     /**
      * Test the network using data and return the MSE of the network.
-     * 
+     *
      * You might need to run {@link #fann_reset_MSE(Pointer)} first
-     * 
+     *
      * @param ann
-     * @param data
-     *            the data to test with
+     * @param data the data to test with
      * @return the mean square error of the network
      */
     protected static native float fann_test_data(Pointer ann, Pointer data);
 
     /**
      * Read the training or testing data from a file
-     * 
-     * You must call {@link #fann_destroy_train(Pointer)} on the {@link Pointer}
-     * you get from this after you have finished with it
-     * 
-     * @param filename
-     *            the file name of the file to read the data from
-     * @return pointer to the data which has been read for use with
-     *         {@link #fann_test_data(Pointer,Pointer)}
+     *
+     * You must call {@link #fann_destroy_train(Pointer)} on the {@link Pointer} you get from this after you
+     * have finished with it
+     *
+     * @param filename the file name of the file to read the data from
+     * @return pointer to the data which has been read for use with {@link #fann_test_data(Pointer,Pointer)}
      */
     protected static native Pointer fann_read_train_from_file(String filename);
 
     /**
      * Deallocate the data
-     * 
-     * @param data
-     *            the training/testing data to deallocate
+     *
+     * @param data the training/testing data to deallocate
      */
     protected static native void fann_destroy_train(Pointer data);
 }
