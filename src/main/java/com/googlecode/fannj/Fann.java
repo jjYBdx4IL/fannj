@@ -154,6 +154,15 @@ public class Fann {
         close();
         super.finalize();
     }
+    
+    /**
+     * Used for testing only. At the Java level, all FannJ methods should work with Exceptions.
+     *  
+     * @return
+     */
+    int getErrno() {
+    	return fann_get_errno(ann);
+    }
 
     /*
      * A JNA Direct Mapping implementation of the FANN library. This instance
@@ -193,4 +202,9 @@ public class Fann {
             String configuration_file);
 
     protected static native int fann_save(Pointer ann, String file);
+    
+    protected static native int fann_get_errno(Pointer ann);
+    protected static native String fann_get_errstr(Pointer ann);
+    protected static native void fann_reset_errno(Pointer ann);
+    protected static native void fann_reset_errstr(Pointer ann);
 }

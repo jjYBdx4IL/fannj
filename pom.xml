@@ -13,7 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <fann.version>2.2.0</fann.version>
+        <fann.version>d71d54788bee56ba4cf7522801270152da5209d7</fann.version>
     </properties>
     <licenses>
         <license>
@@ -393,9 +393,9 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <url>https://sourceforge.net/projects/fann/files/fann/${fann.version}/FANN-${fann.version}-Source.zip/download</url>
+                            <url>https://github.com/libfann/fann/archive/d71d54788bee56ba4cf7522801270152da5209d7.zip</url>
                             <outputFileName>fann.zip</outputFileName>
-                            <sha1>6f95232c018af7f62fb4c7e39d160771a867d6e7</sha1>
+                            <sha1>1af15ae4451291075f83232bdfd9966c61726c4c</sha1>
                             <unpack>true</unpack>
                         </configuration>
                     </plugin>
@@ -430,7 +430,7 @@
                                 <configuration>
                                     <executable>${project.basedir}/src/main/resources/build.sh</executable>
                                     <arguments>
-                                        <arg>${project.build.directory}/FANN-${fann.version}-Source</arg>
+                                        <arg>${project.build.directory}/fann-${fann.version}</arg>
                                         <arg>${project.build.outputDirectory}/linux-x86-64</arg>
                                         <arg>${project.basedir}/src/main/resources/cmake-toolchain-linux64</arg>
                                         <arg>${project.basedir}</arg>
@@ -447,7 +447,7 @@
                                 <configuration>
                                     <executable>${project.basedir}/src/main/resources/build.sh</executable>
                                     <arguments>
-                                        <arg>${project.build.directory}/FANN-${fann.version}-Source</arg>
+                                        <arg>${project.build.directory}/fann-${fann.version}</arg>
                                         <arg>${project.build.outputDirectory}/win32-x86-64</arg>
                                         <arg>${project.basedir}/src/main/resources/cmake-toolchain-win64</arg>
                                         <arg>${project.basedir}</arg>

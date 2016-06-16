@@ -11,10 +11,12 @@ set -o pipefail
 set -Eex
 
 cd "$srcdir"
+cp CMakeLists.txt CMakeLists.txt.bak
+grep -v "ADD_SUBDIRECTORY.*\(lib/googletest\|tests\)" CMakeLists.txt.bak > CMakeLists.txt
 rm -rf build
 install -d build
 cd build
-cmake "$srcdir" -DCMAKE_TOOLCHAIN_FILE="$toolchainfile"
+cmake "$srcdir" -DCMAKE_TOOLCHAIN_FILE="$toolchainfile" # -DCMAKE_BUILD_TYPE=Debug
 make
 install -d "$destdir"
 cp src/libfann.so "$destdir/libfann.so" || cp src/libfann.dll "$destdir/fann.dll"

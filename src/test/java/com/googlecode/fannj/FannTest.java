@@ -17,22 +17,24 @@
  */
 package com.googlecode.fannj;
 
-import java.io.IOException;
-import static org.junit.Assert.*;
-import org.junit.Test;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.io.IOUtils;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class FannTest {
 
-    public File build() throws IOException {
- 
+    public static File build(String resourceId) throws IOException {
+
         File temp = File.createTempFile("fannj_", ".net");
         temp.deleteOnExit();
-        IOUtils.copy(this.getClass().getResourceAsStream("xor.data"),  new FileOutputStream(temp));
+        IOUtils.copy(FannTest.class.getResourceAsStream(resourceId), new FileOutputStream(temp));
         List<Layer> layers = new ArrayList<Layer>();
         layers.add(Layer.create(2));
         layers.add(Layer.create(3, ActivationFunction.FANN_SIGMOID_SYMMETRIC));
@@ -40,15 +42,15 @@ public class FannTest {
         Fann fann = new Fann(layers);
         Trainer trainer = new Trainer(fann);
         float desiredError = .001f;
-        float mse = trainer.train(temp.getPath(), 500000, 1000, desiredError);        
+        float mse = trainer.train(temp.getPath(), 500000, 1000, desiredError);
         fann.save(temp.toString());
+        assertEquals(0, fann.getErrno());
         return temp;
     }
-    
-    
+
     @Test
     public void testTrainAndRun() throws IOException {
-        File temp = build();
+        File temp = build("xor.data");
         Fann fann = new Fann(temp.getPath());
         assertEquals(2, fann.getNumInputNeurons());
         assertEquals(1, fann.getNumOutputNeurons());
@@ -57,5 +59,29 @@ public class FannTest {
         assertEquals(1f, fann.run(new float[]{1, -1})[0], .2f);
         assertEquals(-1f, fann.run(new float[]{1, 1})[0], .2f);
         fann.close();
+    }
+
+    @Test
+    public void testFannGetErrNo() throws IOException, URISyntaxException, InterruptedException {
+
+        File temp = build("xor.data");
+        Fann fann = new Fann(temp.getPath());
+
+        Trainer trainer = new Trainer(fann);
+        float desiredError = .001f;
+        assertEquals(0, fann.getErrno());
+
+        float mse = trainer.train(new File(FannTest.class.getResource("badTrainingData10.data").toURI()).getPath(), 500000, 1000, desiredError);
+        // TODO not good, filed an issue: https://github.com/libfann/fann/issues/69
+        assertEquals(0, fann.getErrno());
+    }
+
+    public static void main(String[] args) {
+        try {
+            new FannTest().testFannGetErrNo();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+
     }
 }

@@ -55,6 +55,9 @@ public class Trainer {
 
         fann_train_on_file(fann.ann, trainingFile, maxEpochs,
                 epochsBetweenReports, desiredError);
+        if (fann.getErrno() != 0) {
+        	throw new RuntimeException();
+        }
         return fann_get_MSE(fann.ann);
     }
 
