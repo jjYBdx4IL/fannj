@@ -34,7 +34,7 @@ public class Layer extends ArrayList<Neuron> {
      * steepness: {@link Neuron#DEFAULT_ACTIVATION_STEEPNESS}
      * 
      * @param numNeurons
-     * @return
+     * @return the layer
      */
     public static Layer create(int numNeurons) {
         return create(numNeurons, Neuron.DEFAULT_ACTIVATION_FUNCTION,
@@ -48,7 +48,7 @@ public class Layer extends ArrayList<Neuron> {
      * 
      * @param numNeurons
      * @param activationFunction
-     * @return
+     * @return the layer
      */
     public static Layer create(int numNeurons, ActivationFunction activationFunction) {
 
@@ -62,14 +62,15 @@ public class Layer extends ArrayList<Neuron> {
      * @param numNeurons
      * @param activationFunction
      * @param steepness
-     * @return
+     * @return the layer
      */
     public static Layer create(int numNeurons, ActivationFunction activationFunction,
                                float steepness) {
 
         Layer layer = new Layer();
-        for (int i = 0; i < numNeurons; i++)
+        for (int i = 0; i < numNeurons; i++) {
             layer.add(new Neuron(activationFunction, steepness));
+        }
         return layer;
     }
 }

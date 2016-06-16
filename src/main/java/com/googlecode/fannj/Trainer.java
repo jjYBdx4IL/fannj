@@ -22,11 +22,8 @@ import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
 
 /**
  * Trains an ANN. Currently only File based training is supported.
