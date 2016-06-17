@@ -393,7 +393,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <url>https://github.com/libfann/fann/archive/d71d54788bee56ba4cf7522801270152da5209d7.zip</url>
+                            <url>https://github.com/libfann/fann/archive/${fann.version}.zip</url>
                             <outputFileName>fann.zip</outputFileName>
                             <sha1>1af15ae4451291075f83232bdfd9966c61726c4c</sha1>
                             <unpack>true</unpack>
@@ -422,7 +422,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>linux-build</id>
+                                <id>native-build</id>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
@@ -430,28 +430,8 @@
                                 <configuration>
                                     <executable>${project.basedir}/src/main/resources/build.sh</executable>
                                     <arguments>
-                                        <arg>${project.build.directory}/fann-${fann.version}</arg>
-                                        <arg>${project.build.outputDirectory}/linux-x86-64</arg>
-                                        <arg>${project.basedir}/src/main/resources/cmake-toolchain-linux64</arg>
                                         <arg>${project.basedir}</arg>
-                                        <arg>x86_64-linux-gnu-gcc</arg>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>windows-build</id>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <phase>generate-test-sources</phase>
-                                <configuration>
-                                    <executable>${project.basedir}/src/main/resources/build.sh</executable>
-                                    <arguments>
-                                        <arg>${project.build.directory}/fann-${fann.version}</arg>
-                                        <arg>${project.build.outputDirectory}/win32-x86-64</arg>
-                                        <arg>${project.basedir}/src/main/resources/cmake-toolchain-win64</arg>
-                                        <arg>${project.basedir}</arg>
-                                        <arg>x86_64-w64-mingw32-gcc</arg>
+                                        <arg>${fann.version}</arg>
                                     </arguments>
                                 </configuration>
                             </execution>
