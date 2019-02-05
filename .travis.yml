@@ -1,9 +1,7 @@
 language: java
 install:
   - sudo apt-get -y install mingw-w64
-  - git clone https://github.com/jjYBdx4IL/github-utils.git
 script:
-  - mvn -V -B install -f github-utils
   - mvn -V -B install
 dist: trusty
 notifications:

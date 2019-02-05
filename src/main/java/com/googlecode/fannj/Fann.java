@@ -17,15 +17,12 @@
  */
 package com.googlecode.fannj;
 
-import com.sun.jna.Library;
-import java.util.List;
-
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
-import com.sun.jna.win32.StdCallLibrary;
-import java.util.Map;
+
+import java.util.List;
 
 /**
  * <p>
@@ -47,7 +44,7 @@ import java.util.Map;
 public class Fann {
 
     static {
-        NativeLibrary fann = NativeLibrary.getInstance("fann");
+        NativeLibrary fann = NativeLibrary.getInstance(Platform.isWindows() ? "libfann" : "fann");
         Native.register(fann);
     }
 

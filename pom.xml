@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.jjYBdx4IL.nn.fannj</groupId>
@@ -7,19 +8,26 @@
     <version>0.7.3-SNAPSHOT</version>
     <name>fannj</name>
     <description>Provides Java bindings to the Fast Artificial Neural Network Library (FANN). This is a release of the upstream project https://github.com/krenfro/fannj including native libs for x86-64 windows and linux</description>
-       
+
     <url>https://github.com/jjYBdx4IL/fannj</url>
     <inceptionYear>2009</inceptionYear>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <fann.version>d71d54788bee56ba4cf7522801270152da5209d7</fann.version>
+        <fann.version>7ec1fc7e5bd734f1d3c89b095e630e83c86b9be1</fann.version>
     </properties>
     <licenses>
         <license>
             <name>GNU LGPL v3</name>
             <url>http://www.gnu.org/licenses/lgpl.txt</url>
             <distribution>repo</distribution>
+            <comments>License applies to everything except the included FANN binaries.</comments>
+        </license>
+        <license>
+            <name>GNU LGPL v2.1</name>
+            <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1</url>
+            <distribution>repo</distribution>
+            <comments>License applies to the included FANN binaries.</comments>
         </license>
     </licenses>
     <developers>
@@ -102,6 +110,13 @@
                             <goal>integration-test</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>verify-tests</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
                 </executions>
                 <configuration>
                     <systemPropertyVariables>
@@ -112,6 +127,7 @@
                     </includes>
                     <reuseForks>false</reuseForks>
                     <forkCount>1</forkCount>
+                    <failIfNoTests>true</failIfNoTests>
                 </configuration>
             </plugin>
             <plugin>
@@ -134,7 +150,10 @@
             </plugin>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
-                <goals>deploy nexus-staging:release</goals>
+                <goals>
+                    <goal>deploy</goal>
+                    <goal>nexus-staging:release</goal>
+                </goals>
                 <configuration>
                     <tagNameFormat>@{project.version}</tagNameFormat>
                 </configuration>
@@ -183,7 +202,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.5.1</version>
+                    <version>3.8.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -198,7 +217,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.19.1</version>
+                    <version>3.0.0-M3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -213,7 +232,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>3.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -248,12 +267,50 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.19.1</version>
+                    <version>3.0.0-M3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
                     <version>1.6.7</version>
+                </plugin>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>exec-maven-plugin</artifactId>
+                                        <versionRange>[1.6.0,)</versionRange>
+                                        <goals>
+                                            <goal>exec</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.googlecode.maven-download-plugin</groupId>
+                                        <artifactId>download-maven-plugin</artifactId>
+                                        <versionRange>[1.3.0,)</versionRange>
+                                        <goals>
+                                            <goal>wget</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -265,15 +322,16 @@
 
     <dependencies>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.10.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.jjYBdx4IL</groupId>
-            <artifactId>github-utils</artifactId>
-            <version>1.1</version>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
@@ -290,7 +348,7 @@
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
-            <version>4.2.1</version>
+            <version>5.2.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -307,7 +365,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.21</version>
+            <version>1.7.25</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -386,23 +444,50 @@
                         <version>1.3.0</version>
                         <executions>
                             <execution>
+                                <id>get-fann-c-sources</id>
                                 <goals>
                                     <goal>wget</goal>
                                 </goals>
                                 <phase>generate-sources</phase>
+                                <configuration>
+                                    <url>https://github.com/libfann/fann/archive/${fann.version}.zip</url>
+                                    <outputFileName>fann.zip</outputFileName>
+                                    <sha1>1d8702c9c72d2f72bebd00fefc12c63c33e6064d</sha1>
+                                    <unpack>true</unpack>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>get-jdk8-for-windows</id>
+                                <goals>
+                                    <goal>wget</goal>
+                                </goals>
+                                <phase>generate-sources</phase>
+                                <configuration>
+                                    <url>https://cdn.azul.com/zulu/bin/zulu8.36.0.1-ca-jdk8.0.202-win_x64.zip</url>
+                                    <outputFileName>jdk8w.zip</outputFileName>
+                                    <sha1>4a86f509f93a87faf23c218a170c8546e676e98f</sha1>
+                                    <unpack>true</unpack>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>get-maven3</id>
+                                <goals>
+                                    <goal>wget</goal>
+                                </goals>
+                                <phase>generate-sources</phase>
+                                <configuration>
+                                    <url>https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.zip</url>
+                                    <outputFileName>maven3.zip</outputFileName>
+                                    <sha512>7d14ab2b713880538974aa361b987231473fbbed20e83586d542c691ace1139026f232bd46fdcce5e8887f528ab1c3fbfc1b2adec90518b6941235952d3868e9</sha512>
+                                    <unpack>true</unpack>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <url>https://github.com/libfann/fann/archive/${fann.version}.zip</url>
-                            <outputFileName>fann.zip</outputFileName>
-                            <sha1>1af15ae4451291075f83232bdfd9966c61726c4c</sha1>
-                            <unpack>true</unpack>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.5.0</version>
+                        <version>1.6.0</version>
                         <executions>
                             <execution>
                                 <id>build-jni-header</id>
@@ -414,7 +499,7 @@
                                     <executable>javah</executable>
                                     <arguments>
                                         <arg>-classpath</arg>
-                                        <classpath/>
+                                        <classpath />
                                         <arg>-d</arg>
                                         <arg>${project.build.directory}/generated-sources/c</arg>
                                         <arg>com.googlecode.fannj.FannJNI</arg>
@@ -428,10 +513,44 @@
                                 </goals>
                                 <phase>generate-test-sources</phase>
                                 <configuration>
-                                    <executable>${project.basedir}/src/main/resources/build.sh</executable>
+                                    <executable>bash</executable>
                                     <arguments>
+                                        <arg>${project.basedir}/src/main/c/build.sh</arg>
                                         <arg>${project.basedir}</arg>
                                         <arg>${fann.version}</arg>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>wine-integration-test</id>
+            <activation>
+                <file>
+                    <exists>/usr/bin/wineconsole</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>run-tests-wine</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>integration-test</phase>
+                                <configuration>
+                                    <executable>bash</executable>
+                                    <arguments>
+                                        <arg>wintest.sh</arg>
+                                        <arg>${project.build.finalName}</arg>
                                     </arguments>
                                 </configuration>
                             </execution>

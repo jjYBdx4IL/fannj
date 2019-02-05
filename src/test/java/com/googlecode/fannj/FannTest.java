@@ -24,17 +24,24 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.tools.ant.DirectoryScanner;
+
 import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class FannTest {
 
-    public static File build(String resourceId) throws IOException {
-
+    public static File createTemp(File src) throws IOException {
         File temp = File.createTempFile("fannj_", ".net");
         temp.deleteOnExit();
-        IOUtils.copy(FannTest.class.getResourceAsStream(resourceId), new FileOutputStream(temp));
+        FileUtils.copyFile(src, temp);
+        return temp;
+    }
+    
+    public static File build(File res) throws IOException {
+        File temp = createTemp(res);
         List<Layer> layers = new ArrayList<Layer>();
         layers.add(Layer.create(2));
         layers.add(Layer.create(3, ActivationFunction.FANN_SIGMOID_SYMMETRIC));
@@ -50,29 +57,31 @@ public class FannTest {
 
     @Test
     public void testTrainAndRun() throws IOException {
-        File temp = build("xor.data");
+        File temp = build(glob1("**/xor.data"));
         Fann fann = new Fann(temp.getPath());
         assertEquals(2, fann.getNumInputNeurons());
         assertEquals(1, fann.getNumOutputNeurons());
-        assertEquals(-1f, fann.run(new float[]{-1, -1})[0], .2f);
-        assertEquals(1f, fann.run(new float[]{-1, 1})[0], .2f);
-        assertEquals(1f, fann.run(new float[]{1, -1})[0], .2f);
-        assertEquals(-1f, fann.run(new float[]{1, 1})[0], .2f);
+        assertEquals(-1f, fann.run(new float[] { -1, -1 })[0], .2f);
+        assertEquals(1f, fann.run(new float[] { -1, 1 })[0], .2f);
+        assertEquals(1f, fann.run(new float[] { 1, -1 })[0], .2f);
+        assertEquals(-1f, fann.run(new float[] { 1, 1 })[0], .2f);
         fann.close();
     }
 
     @Test
     public void testFannGetErrNo() throws IOException, URISyntaxException, InterruptedException {
 
-        File temp = build("xor.data");
+        File temp = build(glob1("**/xor.data"));
         Fann fann = new Fann(temp.getPath());
 
         Trainer trainer = new Trainer(fann);
         float desiredError = .001f;
         assertEquals(0, fann.getErrno());
 
-        float mse = trainer.train(new File(FannTest.class.getResource("badTrainingData10.data").toURI()).getPath(), 500000, 1000, desiredError);
-        // TODO not good, filed an issue: https://github.com/libfann/fann/issues/69
+        float mse = trainer.train(new File(FannTest.class.getResource("badTrainingData10.data").toURI()).getPath(),
+            500000, 1000, desiredError);
+        // TODO not good, filed an issue:
+        // https://github.com/libfann/fann/issues/69
         assertEquals(0, fann.getErrno());
     }
 
@@ -84,4 +93,21 @@ public class FannTest {
         }
 
     }
+
+    public static File glob1(String pattern) throws IOException {
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setIncludes(new String[] { pattern });
+        scanner.setBasedir(System.getProperty("user.dir"));
+        scanner.setCaseSensitive(false);
+        scanner.scan();
+        String[] files = scanner.getIncludedFiles();
+        if (files.length == 0) {
+            throw new IOException("no match found: " + pattern);
+        }
+        if (files.length > 1) {
+            throw new IOException("multiple matches found: " + pattern);
+        }
+        return new File(scanner.getBasedir(), files[0]);
+    }
+
 }

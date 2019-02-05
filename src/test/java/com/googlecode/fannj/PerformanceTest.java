@@ -1,14 +1,9 @@
 package com.googlecode.fannj;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-
+import static com.googlecode.fannj.FannTest.glob1;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
@@ -23,6 +18,14 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class PerformanceTest {
 
@@ -84,7 +87,7 @@ public class PerformanceTest {
 
         @Setup(Level.Trial)
         public void initialize() throws IOException {
-            data = new TrainData(PerformanceTest.class.getResourceAsStream("xor.data"));
+            data = new TrainData(new FileInputStream(glob1("**/xor.data")));
             inputValues = data.getInputValues();
             outputValues = data.getInputValues();
             numDataSets = data.getNumDataSets();

@@ -17,7 +17,11 @@
  */
 package com.googlecode.fannj;
 
-import com.github.jjYBdx4IL.utils.ResourceUtils;
+import com.sun.jna.Native;
+import com.sun.jna.NativeLibrary;
+import com.sun.jna.Platform;
+
+import java.io.File;
 
 /**
  * Native function declarations for JNI. Used to speed up lower level access to the native lib.
@@ -27,7 +31,18 @@ import com.github.jjYBdx4IL.utils.ResourceUtils;
 public class FannJNI {
 
     static {
-        ResourceUtils.loadLibrary("jnifann");
+        NativeLibrary.getInstance(Platform.isWindows() ? "libfann" : "fann");
+        File libfile = null;
+        try {
+            libfile = Native.extractFromResourcePath(Platform.isWindows() ? "libjnifann" : "jnifann");
+            System.load(libfile.getAbsolutePath());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (libfile != null && libfile.getName().startsWith("jna")) {
+                libfile.delete();
+            }
+        }
     }
 
     // no public access, main fann lib must be loaded first, which is done by accessing stuff via

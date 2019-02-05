@@ -19,6 +19,7 @@ package com.googlecode.fannj;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 
 import java.io.File;
@@ -33,7 +34,7 @@ import java.io.IOException;
 public class Trainer {
 
     static {
-        NativeLibrary fann = NativeLibrary.getInstance("fann");
+        NativeLibrary fann = NativeLibrary.getInstance(Platform.isWindows() ? "libfann" : "fann");
         Native.register(fann);
     }
 
