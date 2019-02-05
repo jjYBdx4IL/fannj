@@ -1,9 +1,19 @@
 language: java
 install:
+  - sudo dpkg --add-architecture i386
+  - sudo wget -nc https://dl.winehq.org/wine-builds/winehq.key
+  - sudo apt-key add winehq.key
+  - sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ xenial main'
+  - sudo apt-get update
+  - sudo apt install --install-recommends winehq-stable
   - sudo apt-get -y install mingw-w64
 script:
   - mvn -V -B install
-dist: trusty
+dist: xenial
 notifications:
   email: false
+env:
+  - PUBLIC_CI=true
+jdk:
+  - openjdk11
 

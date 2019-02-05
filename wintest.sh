@@ -13,6 +13,11 @@ rsync -a --exclude=/target/wine/ ./ target/wine/
 pushd target/wine
 rm -rf target/failsafe-reports target/classes
 cp target/$finalName.jar out.jar
-wineconsole cmd /C wintest.cmd
+
+backend=""
+if [[ -n "$PUBLIC_CI" ]]; then
+    backend=--backend=curses
+fi
+wineconsole $backend cmd /C wintest.cmd >& log
 echo OK
 

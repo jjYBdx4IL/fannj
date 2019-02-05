@@ -59,3 +59,5 @@ Use specific execution ids (`@...`) or maven will execute prior steps and rebuil
 
 If you have `/usr/bin/wineconsole` installed, an automatic integration test is done against your wine installation.
 
+This is highly recommended, also because the wine integration test is more rigorous because it runs against
+the final jar.

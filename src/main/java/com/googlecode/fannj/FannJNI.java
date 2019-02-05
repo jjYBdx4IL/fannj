@@ -31,10 +31,9 @@ import java.io.File;
 public class FannJNI {
 
     static {
-        NativeLibrary.getInstance(Platform.isWindows() ? "libfann" : "fann");
         File libfile = null;
         try {
-            libfile = Native.extractFromResourcePath(Platform.isWindows() ? "libjnifann" : "jnifann");
+            libfile = Native.extractFromResourcePath(Platform.isWindows() ? "libfann" : "fann");
             System.load(libfile.getAbsolutePath());
         } catch (Exception e) {
             throw new RuntimeException(e);
