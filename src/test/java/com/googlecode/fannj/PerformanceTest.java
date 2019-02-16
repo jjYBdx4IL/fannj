@@ -61,10 +61,11 @@ public class PerformanceTest {
                 .warmupIterations(2)
                 .measurementTime(TimeValue.milliseconds(100))
                 .measurementIterations(10)
-                .threads(2)
+                .threads(1)
                 .forks(1)
                 .shouldFailOnError(true)
                 .shouldDoGC(true)
+                .operationsPerInvocation(1000)
                 .build();
 
         Runner r = new Runner(opt);

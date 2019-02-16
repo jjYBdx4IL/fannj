@@ -18,7 +18,6 @@
 package com.googlecode.fannj;
 
 import com.sun.jna.Native;
-import com.sun.jna.NativeLibrary;
 import com.sun.jna.Platform;
 
 import java.io.File;

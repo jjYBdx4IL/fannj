@@ -17,19 +17,17 @@
  */
 package com.googlecode.fannj;
 
+import static org.junit.Assert.assertEquals;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.tools.ant.DirectoryScanner;
+import org.junit.Test;
+
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.tools.ant.DirectoryScanner;
-
-import static org.junit.Assert.*;
-import org.junit.Test;
 
 public class FannTest {
 
@@ -49,6 +47,7 @@ public class FannTest {
         Fann fann = new Fann(layers);
         Trainer trainer = new Trainer(fann);
         float desiredError = .001f;
+        @SuppressWarnings("unused")
         float mse = trainer.train(temp.getPath(), 500000, 1000, desiredError);
         fann.save(temp.toString());
         assertEquals(0, fann.getErrno());
@@ -78,6 +77,7 @@ public class FannTest {
         float desiredError = .001f;
         assertEquals(0, fann.getErrno());
 
+        @SuppressWarnings("unused")
         float mse = trainer.train(new File(FannTest.class.getResource("badTrainingData10.data").toURI()).getPath(),
             500000, 1000, desiredError);
         // TODO not good, filed an issue:

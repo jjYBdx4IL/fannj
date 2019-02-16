@@ -1,4 +1,4 @@
-for /D %%f in (target\zulu*) do (
+for /D %%f in (target\jdk-*) do (
     CALL :NORMALIZEPATH %%f
 )
 set JAVA_HOME=%RETVAL%

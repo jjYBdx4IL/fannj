@@ -101,8 +101,12 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.9</source>
+                    <target>1.9</target>
+                    <compilerArgs>
+                        <compilerArg>-h</compilerArg>
+                        <compilerArg>${project.build.directory}/generated-sources/c</compilerArg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <!-- ITs run against the natives bundled in the final jar -->
@@ -138,7 +142,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <executions>
                     <execution>
@@ -244,7 +247,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.3</version>
+                    <version>3.0.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -470,9 +473,9 @@
                                 </goals>
                                 <phase>generate-sources</phase>
                                 <configuration>
-                                    <url>https://cdn.azul.com/zulu/bin/zulu8.36.0.1-ca-jdk8.0.202-win_x64.zip</url>
-                                    <outputFileName>jdk8w.zip</outputFileName>
-                                    <sha1>4a86f509f93a87faf23c218a170c8546e676e98f</sha1>
+                                    <url>https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_windows-x64_bin.zip</url>
+                                    <outputFileName>jdk11w.zip</outputFileName>
+                                    <sha1>45d9022462c812e92702360e011f29604f1de334</sha1>
                                     <unpack>true</unpack>
                                 </configuration>
                             </execution>
@@ -496,23 +499,6 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <version>1.6.0</version>
                         <executions>
-                            <execution>
-                                <id>build-jni-header</id>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <phase>generate-test-sources</phase>
-                                <configuration>
-                                    <executable>javah</executable>
-                                    <arguments>
-                                        <arg>-classpath</arg>
-                                        <classpath />
-                                        <arg>-d</arg>
-                                        <arg>${project.build.directory}/generated-sources/c</arg>
-                                        <arg>com.googlecode.fannj.FannJNI</arg>
-                                    </arguments>
-                                </configuration>
-                            </execution>
                             <execution>
                                 <id>native-build</id>
                                 <goals>
