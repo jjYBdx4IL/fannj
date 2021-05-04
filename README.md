@@ -61,3 +61,8 @@ If you have `/usr/bin/wineconsole` installed, an automatic integration test is d
 
 This is highly recommended, also because the wine integration test is more rigorous because it runs against
 the final jar.
+
+
+--
+[![Build Status](https://travis-ci.org/jjYBdx4IL/fannj.png?branch=master)](https://travis-ci.org/jjYBdx4IL/fannj)
+devel/java/github/fannj@7840
