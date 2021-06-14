@@ -64,5 +64,5 @@ the final jar.
 
 
 --
-[![Build Status](https://travis-ci.org/jjYBdx4IL/fannj.png?branch=master)](https://travis-ci.org/jjYBdx4IL/fannj)
-devel/java/github/fannj@7840
+[![Build Status](https://travis-ci.com/jjYBdx4IL/fannj.png?branch=master)](https://travis-ci.org/jjYBdx4IL/fannj)
+devel/java/github/fannj@7881

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
@@ -159,16 +160,6 @@
                 <artifactId>maven-scm-plugin</artifactId>
             </plugin>
             <plugin>
-                <artifactId>maven-release-plugin</artifactId>
-                <goals>
-                    <goal>deploy</goal>
-                    <goal>nexus-staging:release</goal>
-                </goals>
-                <configuration>
-                    <tagNameFormat>@{project.version}</tagNameFormat>
-                </configuration>
-            </plugin>
-            <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <executions>
                     <execution>
@@ -189,16 +180,6 @@
                     </systemPropertyVariables>
                     <reuseForks>false</reuseForks>
                     <forkCount>1</forkCount>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>oss.sonatype.org</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
         </plugins>
@@ -284,7 +265,8 @@
                     <artifactId>nexus-staging-maven-plugin</artifactId>
                     <version>1.6.7</version>
                 </plugin>
-                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <!--This plugin's configuration is used to store Eclipse 
+                    m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>
@@ -392,6 +374,26 @@
             <build>
                 <plugins>
                     <plugin>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <goals>
+                            <goal>deploy</goal>
+                            <goal>nexus-staging:release</goal>
+                        </goals>
+                        <configuration>
+                            <tagNameFormat>@{project.version}</tagNameFormat>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>oss.sonatype.org</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <artifactId>maven-enforcer-plugin</artifactId>
                         <executions>
                             <execution>
@@ -451,7 +453,7 @@
                     <plugin>
                         <groupId>com.googlecode.maven-download-plugin</groupId>
                         <artifactId>download-maven-plugin</artifactId>
-                        <version>1.3.0</version>
+                        <version>1.6.3</version>
                         <executions>
                             <execution>
                                 <id>get-fann-c-sources</id>
